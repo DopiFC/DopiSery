@@ -1,0 +1,6 @@
+{
+  "name": "DopiSery - Smart Document Tools",
+  "description": "Bộ công cụ xử lý tài liệu văn phòng trực tuyến: PDF sang Word có thể chỉnh sửa, bảo vệ mật khẩu PDF, gộp, tách, nén, đóng dấu và chuyển đổi tài liệu an toàn 100% trên trình duyệt.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
