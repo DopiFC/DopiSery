@@ -21,6 +21,7 @@ import {
   PdfDocumentInfo,
 } from '../services/pdfService';
 import { downloadUint8Array, getBaseFileName, formatBytes } from '../utils/fileUtils';
+import { getAssetUrl } from '../utils/assetUtils';
 
 export const WatermarkPdfTool: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -48,9 +49,9 @@ export const WatermarkPdfTool: React.FC = () => {
         const buf = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({
           data: new Uint8Array(buf),
-          cMapUrl: '/cmaps/',
+          cMapUrl: getAssetUrl('cmaps/'),
           cMapPacked: true,
-          standardFontDataUrl: '/standard_fonts/',
+          standardFontDataUrl: getAssetUrl('standard_fonts/'),
         }).promise;
 
         if (isCancelled) return;

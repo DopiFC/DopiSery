@@ -10,10 +10,11 @@ import {
   StandardFonts,
 } from 'pdf-lib';
 import { createOcrSession, OcrSession, OcrLanguage } from './ocrService';
+import { getAssetUrl } from '../utils/assetUtils';
 
 // Configure pdf.js worker
 if (typeof window !== 'undefined') {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+  pdfjsLib.GlobalWorkerOptions.workerSrc = getAssetUrl('pdf.worker.min.mjs');
 }
 
 export interface PdfDocumentInfo {
@@ -61,9 +62,9 @@ export async function inspectPdfFile(file: File): Promise<PdfDocumentInfo> {
   try {
     const loadingTask = pdfjsLib.getDocument({
       data: new Uint8Array(arrayBuffer),
-      cMapUrl: '/cmaps/',
+      cMapUrl: getAssetUrl('cmaps/'),
       cMapPacked: true,
-      standardFontDataUrl: '/standard_fonts/',
+      standardFontDataUrl: getAssetUrl('standard_fonts/'),
     });
 
     // 20-second timeout guard to prevent infinite hang on corrupted files
@@ -209,9 +210,9 @@ export async function convertPdfToEditableHtml(
 
   const loadingTask = pdfjsLib.getDocument({
     data: new Uint8Array(arrayBuffer),
-    cMapUrl: '/cmaps/',
+    cMapUrl: getAssetUrl('cmaps/'),
     cMapPacked: true,
-    standardFontDataUrl: '/standard_fonts/',
+    standardFontDataUrl: getAssetUrl('standard_fonts/'),
   });
 
   const loadTimeoutPromise = new Promise<never>((_, reject) =>
@@ -884,9 +885,9 @@ export async function extractRawTextFromPdf(
   const arrayBuffer = await file.arrayBuffer();
   const pdfDoc = await pdfjsLib.getDocument({
     data: new Uint8Array(arrayBuffer),
-    cMapUrl: '/cmaps/',
+    cMapUrl: getAssetUrl('cmaps/'),
     cMapPacked: true,
-    standardFontDataUrl: '/standard_fonts/',
+    standardFontDataUrl: getAssetUrl('standard_fonts/'),
   }).promise;
   const numPages = pdfDoc.numPages;
   const textChunks: string[] = [];

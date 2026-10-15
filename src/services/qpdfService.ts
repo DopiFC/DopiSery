@@ -27,6 +27,8 @@ interface QpdfRunnerInstance {
 let qpdfRunnerInstance: QpdfRunnerInstance | null = null;
 let scriptLoadingPromise: Promise<void> | null = null;
 
+import { getAssetUrl } from '../utils/assetUtils';
+
 function loadQpdfScript(): Promise<void> {
   if (typeof window === 'undefined') {
     return Promise.reject(new Error('QPDF must run in a browser environment.'));
@@ -44,7 +46,7 @@ function loadQpdfScript(): Promise<void> {
 
   scriptLoadingPromise = new Promise((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = '/qpdf/browser-qpdf.js';
+    script.src = getAssetUrl('qpdf/browser-qpdf.js');
     script.async = true;
     script.onload = () => {
       if (w.WasmZooQpdf) {
@@ -54,7 +56,7 @@ function loadQpdfScript(): Promise<void> {
       }
     };
     script.onerror = () => {
-      reject(new Error('Không thể tải QPDF WebAssembly runtime từ /qpdf/browser-qpdf.js.'));
+      reject(new Error('Không thể tải QPDF WebAssembly runtime từ ' + getAssetUrl('qpdf/browser-qpdf.js')));
     };
     document.head.appendChild(script);
   });
@@ -67,11 +69,10 @@ export async function getQpdfRunner(): Promise<QpdfRunnerInstance> {
   const w = window as unknown as { WasmZooQpdf: { loadHosted: (opts: { baseUrl: string; coreJsUrl: string; wasmUrl: string }) => QpdfRunnerInstance } };
   
   if (!qpdfRunnerInstance) {
-    const origin = window.location.origin;
     qpdfRunnerInstance = w.WasmZooQpdf.loadHosted({
-      baseUrl: `${origin}/qpdf/`,
-      coreJsUrl: `${origin}/qpdf/qpdf-core.js`,
-      wasmUrl: `${origin}/qpdf/qpdf-core.wasm`
+      baseUrl: getAssetUrl('qpdf/'),
+      coreJsUrl: getAssetUrl('qpdf/qpdf-core.js'),
+      wasmUrl: getAssetUrl('qpdf/qpdf-core.wasm')
     });
     await qpdfRunnerInstance.load();
   }

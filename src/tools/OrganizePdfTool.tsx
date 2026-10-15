@@ -16,6 +16,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { FileUploadZone } from '../components/FileUploadZone';
 import { renderPageToCanvas, organizePdfPages } from '../services/pdfService';
 import { downloadUint8Array, getBaseFileName, formatBytes } from '../utils/fileUtils';
+import { getAssetUrl } from '../utils/assetUtils';
 
 interface PageCardState {
   originalIndex: number;
@@ -44,9 +45,9 @@ export const OrganizePdfTool: React.FC = () => {
       const buffer = await file.arrayBuffer();
       const pdfDoc = await pdfjsLib.getDocument({
         data: new Uint8Array(buffer),
-        cMapUrl: '/cmaps/',
+        cMapUrl: getAssetUrl('cmaps/'),
         cMapPacked: true,
-        standardFontDataUrl: '/standard_fonts/',
+        standardFontDataUrl: getAssetUrl('standard_fonts/'),
       }).promise;
       const count = pdfDoc.numPages;
 
