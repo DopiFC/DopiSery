@@ -9,6 +9,9 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { ToolGrid } from './components/ToolGrid';
 import { PrivacyModal } from './components/PrivacyModal';
+import { DonateModal } from './components/DonateModal';
+import { FeedbackModal } from './components/FeedbackModal';
+import { MenuDrawer } from './components/MenuDrawer';
 
 // Tools
 import { PdfToWordTool } from './tools/PdfToWordTool';
@@ -28,6 +31,9 @@ import { MergeExcelTool } from './tools/MergeExcelTool';
 export default function App() {
   const [currentTool, setCurrentTool] = useState<ToolId>('home');
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+  const [isDonateOpen, setIsDonateOpen] = useState(false);
+  const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
   // Sync dark mode class on html tag
@@ -42,7 +48,27 @@ export default function App() {
   // Scroll to top when switching tools
   const handleSelectTool = (id: ToolId) => {
     setCurrentTool(id);
+    setIsMenuOpen(false);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const getToolTitle = (id: ToolId): string => {
+    switch (id) {
+      case 'pdf-to-word': return 'PDF sang Word';
+      case 'protect-pdf': return 'Bảo vệ PDF bằng mật khẩu';
+      case 'merge-pdf': return 'Gộp nhiều PDF';
+      case 'split-pdf': return 'Tách trang PDF';
+      case 'compress-pdf': return 'Nén & Tối ưu PDF';
+      case 'organize-pdf': return 'Xoay, sắp xếp & xóa trang';
+      case 'watermark-pdf': return 'Đóng dấu bản quyền';
+      case 'page-number-pdf': return 'Đánh số trang PDF';
+      case 'images-to-pdf': return 'Hình ảnh sang PDF';
+      case 'extract-text': return 'Trích xuất văn bản';
+      case 'qr-code': return 'Tạo mã QR Offline';
+      case 'text-tools': return 'Bộ đếm & Định dạng văn bản';
+      case 'merge-excel': return 'Gộp các file Excel';
+      default: return '';
+    }
   };
 
   const renderActiveTool = () => {
@@ -97,6 +123,8 @@ export default function App() {
         currentTool={currentTool}
         onSelectTool={handleSelectTool}
         onOpenPrivacy={() => setIsPrivacyOpen(true)}
+        isMenuOpen={isMenuOpen}
+        onToggleMenu={() => setIsMenuOpen(!isMenuOpen)}
         isDark={isDark}
         onToggleTheme={() => setIsDark(!isDark)}
       />
@@ -108,25 +136,13 @@ export default function App() {
           <div className="mb-6 flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
             <button
               onClick={() => handleSelectTool('home')}
-              className="hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline transition font-medium"
+              className="hover:text-indigo-600 dark:hover:text-indigo-400 hover:underline transition font-medium cursor-pointer"
             >
               Trang chủ
             </button>
             <span>/</span>
             <span className="font-semibold text-slate-800 dark:text-slate-200">
-              {currentTool === 'pdf-to-word' && 'PDF sang Word'}
-              {currentTool === 'protect-pdf' && 'Bảo vệ PDF bằng mật khẩu'}
-              {currentTool === 'merge-pdf' && 'Gộp nhiều PDF'}
-              {currentTool === 'split-pdf' && 'Tách trang PDF'}
-              {currentTool === 'compress-pdf' && 'Nén & Tối ưu PDF'}
-              {currentTool === 'organize-pdf' && 'Xoay, sắp xếp & xóa trang'}
-              {currentTool === 'watermark-pdf' && 'Đóng dấu bản quyền'}
-              {currentTool === 'page-number-pdf' && 'Đánh số trang PDF'}
-              {currentTool === 'images-to-pdf' && 'Hình ảnh sang PDF'}
-              {currentTool === 'extract-text' && 'Trích xuất văn bản'}
-              {currentTool === 'qr-code' && 'Tạo mã QR Offline'}
-              {currentTool === 'text-tools' && 'Bộ đếm & Định dạng văn bản'}
-              {currentTool === 'merge-excel' && 'Gộp các file Excel'}
+              {getToolTitle(currentTool)}
             </span>
           </div>
         )}
@@ -138,12 +154,47 @@ export default function App() {
       <Footer
         onSelectTool={handleSelectTool}
         onOpenPrivacy={() => setIsPrivacyOpen(true)}
+        onOpenDonate={() => setIsDonateOpen(true)}
+        onOpenFeedback={() => setIsFeedbackOpen(true)}
       />
 
-      {/* Privacy Policy and Security Guarantees Modal */}
+      {/* Privacy Policy Modal */}
       <PrivacyModal
         isOpen={isPrivacyOpen}
         onClose={() => setIsPrivacyOpen(false)}
+      />
+
+      {/* Donate Modal (Ủng hộ bánh mỳ) */}
+      <DonateModal
+        isOpen={isDonateOpen}
+        onClose={() => setIsDonateOpen(false)}
+      />
+
+      {/* Feedback Modal (Gửi phản hồi) */}
+      <FeedbackModal
+        isOpen={isFeedbackOpen}
+        onClose={() => setIsFeedbackOpen(false)}
+        currentToolName={getToolTitle(currentTool) || 'Trang chủ'}
+      />
+
+      {/* Right-Side Full Features Menu Drawer - Mounted at root to ensure 100% visibility */}
+      <MenuDrawer
+        isOpen={isMenuOpen}
+        onClose={() => setIsMenuOpen(false)}
+        currentTool={currentTool}
+        onSelectTool={handleSelectTool}
+        onOpenDonate={() => {
+          setIsMenuOpen(false);
+          setIsDonateOpen(true);
+        }}
+        onOpenFeedback={() => {
+          setIsMenuOpen(false);
+          setIsFeedbackOpen(true);
+        }}
+        onOpenPrivacy={() => {
+          setIsMenuOpen(false);
+          setIsPrivacyOpen(true);
+        }}
       />
     </div>
   );
